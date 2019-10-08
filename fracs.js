@@ -1,6 +1,6 @@
 'use strict';
 
-const toFloat = s => {
+const toFloat = (s) => {
     const n = parseFloat(s);
     if (Number.isNaN(n)) {
         throw new TypeError('Not a number');
@@ -8,18 +8,20 @@ const toFloat = s => {
     return n;
 }
 
+const toString = (n) => (n).toFixed(3);
+
 const getPercents = shares => {
     // Рассчитать сумму всех долей
     const sum = shares.reduce((sum, s) => sum + toFloat(s), 0);
 
     // Особый случай
     if (sum === 0) {
-        return shares.map(() => (0).toFixed(3));
+        return shares.map(() => toString(0));
     }
 
     // Рассчитать процент каждой доли от общей суммы
     const multiplier = 100 / sum;
-    return shares.map(s => (multiplier * toFloat(s)).toFixed(3));
+    return shares.map(s => toString(multiplier * toFloat(s)));
 }
 
 
