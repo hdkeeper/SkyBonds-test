@@ -33,21 +33,16 @@ const getBondsData = async ({ date, isins }) => {
     // Ищем в кэше запрошенные данные
     const result = [];
     const foundIsin = new Set();
-    let needFetch = false;
 
-    for (let isin of isins) {
+    isins.forEach(isin => {
         if (cache[date] && cache[date][isin]) {
             foundIsin.add(isin);
             result.push(cache[date][isin]);
         }
-        else {
-            result.push(null);
-            needFetch = true;
-        }
-    }
+    });
 
     // Проверяем, всё ли нашли
-    if (!needFetch) {
+    if (result.length === isins.length) {
         return result;
     }
 
@@ -62,25 +57,16 @@ const getBondsData = async ({ date, isins }) => {
     if (cache[date] === undefined) {
         cache[date] = {};
     }
-    for (let fd of fetchedData) {
-        cache[date][fd.isin] = fd;
-    }
-    
-    // Объединить данные из кэша и загруженные данные
-    for (let rIdx = 0, fdIdx = 0; rIdx < result.length; rIdx++) {
-        if (result[rIdx] === null) {
-            result[rIdx] = fetchedData[fdIdx];
-            fdIdx++;
-        }
-    }
+    fetchedData.forEach(fd => cache[date][fd.isin] = fd);
 
-    return result;
+    // Теперь кэш содержит нужные данные
+    return getBondsData({ date, isins });
 };
 
 
 // Тесты
 
-const myTests = [
+const tests = [
     {
         query: { date: '20180120', isins: ['AAA', 'BBB'] },
         expect: { queryCount: 1, itemCount: 2 }
@@ -100,7 +86,7 @@ const myTests = [
 ];
 
 (async function() {
-    for (let { query, expect } of myTests) {
+    for (let { query, expect } of tests) {
         console.log('Запрос:', query);
         const reply = await getBondsData(query);
         console.log('Ответ:', reply);
