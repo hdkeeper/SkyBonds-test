@@ -10,18 +10,18 @@ const toFloat = (s) => {
 
 const toString = (n) => (n).toFixed(3);
 
-const getPercents = shares => {
+const getPercents = fracs => {
     // Рассчитать сумму всех долей
-    const sum = shares.reduce((sum, s) => sum + toFloat(s), 0);
+    const sum = fracs.reduce((sum, s) => sum + toFloat(s), 0);
 
     // Особый случай
     if (sum === 0) {
-        return shares.map(() => toString(0));
+        return fracs.map(() => toString(0));
     }
 
     // Рассчитать процент каждой доли от общей суммы
     const multiplier = 100 / sum;
-    return shares.map(s => toString(multiplier * toFloat(s)));
+    return fracs.map(s => toString(multiplier * toFloat(s)));
 }
 
 
